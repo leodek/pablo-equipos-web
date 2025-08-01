@@ -1,25 +1,56 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="utf-8">
-    <title>Lista de equipos</title>
+<meta charset="utf-8">
+<title>Inventario de Equipos</title>
+
+<!-- DataTables + jQuery desde CDNs -->
+<link  rel="stylesheet"
+        href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+
+<style>
+ body{font-family: Arial, sans-serif; margin:2rem;}
+ h1{color:#0d47a1;}
+ table.dataTable thead th{background:#e3f2fd;color:#0d47a1;font-weight:bold;}
+</style>
 </head>
 <body>
-    <h1>Mi inventario de equipos</h1>
 
-    <p>Cargando datos…</p>
+<h1>Inventario de Equipos</h1>
 
-    <script>
-    fetch('equipos.json')
-        .then(r => r.json())
-        .then(datos => {
-            const pre = document.createElement('pre');
-            pre.textContent = JSON.stringify(datos, null, 2);
-            document.body.replaceChildren(pre);
-        })
-        .catch(err => {
-            document.body.textContent = 'Error al cargar JSON: ' + err;
-        });
-    </script>
+<table id="equipos" class="display" style="width:100%">
+  <thead>
+    <tr>
+      <th>Código planta</th>
+      <th>Nombre</th>
+      <th>Ubicación</th>
+      <th>Marca</th>
+      <th>Estado</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<script>
+fetch('equipos.json')
+  .then(r => r.json())
+  .then(datos => {
+      // convierte [{...},{...}] -> [ [campo1,campo2,…], [...] ]
+      const filas = datos.map(e => [
+          e.codigo_planta, e.nombre, e.ubicacion, e.marca, e.estado
+      ]);
+      $('#equipos').DataTable({
+          data: filas,
+          pageLength: 25,
+          language: { url: "https://cdn.datatables.net/plug-ins/1.13.8/i18n/es-ES.json" }
+      });
+  })
+  .catch(err => {
+      document.body.innerHTML = '<p style="color:red">Error cargando equipos.json<br>'+err+'</p>';
+  });
+</script>
+
 </body>
 </html>
