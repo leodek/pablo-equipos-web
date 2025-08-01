@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Lista de equipos</title>
+  <link rel="stylesheet" href="assets/estilo.css" />
+  <!-- DataTables opcional (bonito y sin código extra) -->
+  <link rel="stylesheet"
+        href="https://cdn.datatables.net/2.0.7/css/dataTables.min.css">
+</head>
+<body>
+  <h1>Equipos – vista pública</h1>
+  <table id="tbl" class="display"></table>
+
+  <script src="https://cdn.datatables.net/2.0.7/js/dataTables.min.js"></script>
+  <script>
+  fetch('equipos.json', {cache: 'no-store'})
+    .then(r => r.json())
+    .then(data => {
+      // transforma [{codigo:.., nombre:..}, …] -> filas y columnas
+      const cols = Object.keys(data[0] || {});
+      const header = cols.map(c => ({ title: c }));
+
+      new DataTable('#tbl', {
+        data: data.map(obj => cols.map(c => obj[c])),
+        columns: header,
+        paging: true,
+        searching: true,
+      });
+    })
+    .catch(err => {
+      document.body.innerHTML += `<p>Error cargando datos: ${err}</p>`;
+    });
+  </script>
+</body>
+</html>
