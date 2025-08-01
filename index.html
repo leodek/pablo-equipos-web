@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Lista de equipos</title>
+</head>
+<body>
+    <h1>Mi inventario de equipos</h1>
+
+    <p>Cargando datos…</p>
+
+    <script>
+    fetch('equipos.json')
+        .then(r => r.json())
+        .then(datos => {
+            const pre = document.createElement('pre');
+            pre.textContent = JSON.stringify(datos, null, 2);
+            document.body.replaceChildren(pre);
+        })
+        .catch(err => {
+            document.body.textContent = 'Error al cargar JSON: ' + err;
+        });
+    </script>
+</body>
+</html>
