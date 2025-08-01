@@ -1,0 +1,23 @@
+[
+  {
+    "Código":      "MOT-001",
+    "Nombre":      "Motor Ventilador 15 kW",
+    "Ubicación":   "Planta A / Línea 3",
+    "Marca":       "WEG",
+    "Estado":      "En servicio"
+  },
+  {
+    "Código":    "BOM-023",
+    "Nombre":    "Bomba centrifuga 50 m³/h",
+    "Ubicación": "Sala Bombas Norte",
+    "Marca":     "KSB",
+    "Estado":    "Fuera de servicio"
+  },
+  {
+    "Código":    "TRF-10",
+    "Nombre":    "Transformador 500 kVA",
+    "Ubicación": "Subestación 2",
+    "Marca":     "ABB",
+    "Estado":    "En mantenimiento"
+  }
+]
