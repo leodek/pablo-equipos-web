@@ -1,0 +1,16 @@
+[
+  {
+    "codigo_planta": "CodigodePlanta",
+    "nombre": "Nombre",
+    "ubicacion": "Ubicacion",
+    "marca": "Marca",
+    "estado": "En servicio"
+  },
+  {
+    "codigo_planta": "Mot001",
+    "nombre": "Motor Trifasico",
+    "ubicacion": "",
+    "marca": "casas",
+    "estado": "En servicio"
+  }
+]
