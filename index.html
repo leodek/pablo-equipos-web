@@ -8,21 +8,20 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- DataTables CSS -->
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">
-  <!-- jQuery -->
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <!-- Bootstrap JS Bundle -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- DataTables JS -->
-  <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
   <style>
     body { font-family: Arial, sans-serif; margin:2rem; }
     h1 { color:#0d47a1; }
     table.dataTable thead th { background:#e3f2fd; color:#0d47a1; font-weight:bold; }
+    tfoot input, tfoot select {
+      width: 100%; box-sizing: border-box;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1 class="mb-4">Inventario de Equipos</h1>
+
+    <!-- Tabla con filtro en cada columna -->
     <table id="equipos" class="display table table-striped" style="width:100%">
       <thead>
         <tr>
@@ -33,77 +32,211 @@
           <th>Estado</th>
         </tr>
       </thead>
+      <tfoot>
+        <tr>
+          <th><input type="text" placeholder="Filtrar Código" /></th>
+          <th><input type="text" placeholder="Filtrar Nombre" /></th>
+          <th><input type="text" placeholder="Filtrar Ubicación" /></th>
+          <th><input type="text" placeholder="Filtrar Marca" /></th>
+          <th>
+            <select>
+              <option value="">Todos</option>
+              <option>Activo</option>
+              <option>Mantenimiento</option>
+              <option>Fuera de servicio</option>
+            </select>
+          </th>
+        </tr>
+      </tfoot>
       <tbody></tbody>
     </table>
   </div>
 
-  <!-- Modal de detalle -->
-  <div class="modal fade" id="equiposModal" tabindex="-1" aria-labelledby="equiposModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+  <!-- Modal de modificación (igual que ModificarEquipoWindow) -->
+  <div class="modal fade" id="modificarModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="equiposModalLabel">Detalle del Equipo</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          <h5 class="modal-title">Modificar Equipo</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <form id="detalleForm">
-            <div class="mb-3">
-              <label for="codigoPlanta" class="form-label">Código planta</label>
-              <input type="text" class="form-control" id="codigoPlanta" readonly>
-            </div>
-            <div class="mb-3">
-              <label for="nombreEquipo" class="form-label">Nombre</label>
-              <input type="text" class="form-control" id="nombreEquipo" readonly>
-            </div>
-            <div class="mb-3">
-              <label for="ubicacionEquipo" class="form-label">Ubicación</label>
-              <input type="text" class="form-control" id="ubicacionEquipo" readonly>
-            </div>
-            <div class="mb-3">
-              <label for="marcaEquipo" class="form-label">Marca</label>
-              <input type="text" class="form-control" id="marcaEquipo" readonly>
-            </div>
-            <div class="mb-3">
-              <label for="estadoEquipo" class="form-label">Estado</label>
-              <input type="text" class="form-control" id="estadoEquipo" readonly>
+          <form id="modificarForm">
+            <!-- Pestañas como en tu UI Tkinter -->
+            <ul class="nav nav-tabs" id="tabsEquipos" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="tab-identificacion" data-bs-toggle="tab"
+                        data-bs-target="#pane-identificacion" type="button" role="tab">
+                  Identificación
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab-instalacion" data-bs-toggle="tab"
+                        data-bs-target="#pane-instalacion" type="button" role="tab">
+                  Instalación
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab-tecnicos" data-bs-toggle="tab"
+                        data-bs-target="#pane-tecnicos" type="button" role="tab">
+                  Datos Técnicos
+                </button>
+              </li>
+            </ul>
+            <div class="tab-content p-3 border border-top-0">
+              <!-- Identificación -->
+              <div class="tab-pane fade show active" id="pane-identificacion" role="tabpanel">
+                <div class="row g-3">
+                  <div class="col-6">
+                    <label for="codigoPlanta" class="form-label">Código planta</label>
+                    <input type="text" class="form-control" id="codigoPlanta">
+                  </div>
+                  <div class="col-6">
+                    <label for="nombreEquipo" class="form-label">Nombre</label>
+                    <input type="text" class="form-control" id="nombreEquipo">
+                  </div>
+                  <div class="col-6">
+                    <label for="claseEquipo" class="form-label">Clase</label>
+                    <input type="text" class="form-control" id="claseEquipo">
+                  </div>
+                  <div class="col-6">
+                    <label for="subclaseEquipo" class="form-label">Subfamilia</label>
+                    <input type="text" class="form-control" id="subclaseEquipo">
+                  </div>
+                  <div class="col-6">
+                    <label for="estadoEquipo" class="form-label">Estado</label>
+                    <input type="text" class="form-control" id="estadoEquipo">
+                  </div>
+                </div>
+              </div>
+              <!-- Instalación -->
+              <div class="tab-pane fade" id="pane-instalacion" role="tabpanel">
+                <div class="row g-3">
+                  <div class="col-6">
+                    <label for="ubicacionEquipo" class="form-label">Ubicación</label>
+                    <input type="text" class="form-control" id="ubicacionEquipo">
+                  </div>
+                  <div class="col-6">
+                    <label for="fechaInstalacion" class="form-label">Fecha instalación</label>
+                    <input type="date" class="form-control" id="fechaInstalacion">
+                  </div>
+                  <div class="col-6">
+                    <label for="proveedorInst" class="form-label">Proveedor</label>
+                    <input type="text" class="form-control" id="proveedorInst">
+                  </div>
+                  <div class="col-6">
+                    <label for="responsableInst" class="form-label">Responsable</label>
+                    <input type="text" class="form-control" id="responsableInst">
+                  </div>
+                  <div class="col-12">
+                    <label for="obsInstalacion" class="form-label">Observaciones</label>
+                    <textarea class="form-control" id="obsInstalacion" rows="2"></textarea>
+                  </div>
+                </div>
+              </div>
+              <!-- Datos Técnicos -->
+              <div class="tab-pane fade" id="pane-tecnicos" role="tabpanel">
+                <div id="dynamicTecnicos" class="row g-3">
+                  <!-- Aquí inyectaremos dinámicamente pares etiqueta/valor -->
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-primary mt-3"
+                        id="addTecnico">Añadir campo técnico</button>
+              </div>
             </div>
           </form>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn btn-primary" id="saveEquipo">Guardar</button>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- jQuery, Bootstrap & DataTables JS -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
   <script>
-    $(document).ready(function() {
-      fetch('equipos.json')
-        .then(response => response.json())
-        .then(datos => {
-          const filas = datos.map(e => [
-            e.codigo_planta, e.nombre, e.ubicacion, e.marca, e.estado
-          ]);
-          const table = $('#equipos').DataTable({
-            data: filas,
-            pageLength: 25,
-            language: { url: "https://cdn.datatables.net/plug-ins/1.13.8/i18n/es-ES.json" }
+  $(function() {
+    // Inicializando DataTable con filtros por columna
+    const table = $('#equipos').DataTable({
+      ajax: 'equipos.json',
+      columns: [
+        { data: 'codigo_planta' },
+        { data: 'nombre' },
+        { data: 'ubicacion' },
+        { data: 'marca' },
+        { data: 'estado' }
+      ],
+      initComplete: function() {
+        // aplicar búsqueda individual en cada columna
+        this.api().columns().every(function() {
+          const column = this;
+          $('input, select', this.footer()).on('keyup change', function() {
+            column.search(this.value).draw();
           });
-          $('#equipos tbody').on('dblclick', 'tr', function () {
-            var data = table.row(this).data();
-            $('#codigoPlanta').val(data[0]);
-            $('#nombreEquipo').val(data[1]);
-            $('#ubicacionEquipo').val(data[2]);
-            $('#marcaEquipo').val(data[3]);
-            $('#estadoEquipo').val(data[4]);
-            var modal = new bootstrap.Modal(document.getElementById('equiposModal'));
-            modal.show();
-          });
-        })
-        .catch(err => {
-          $('.container').html('<p class="text-danger">Error cargando equipos.json<br>' + err + '</p>');
         });
+      },
+      pageLength: 25,
+      language: { url: "https://cdn.datatables.net/plug-ins/1.13.8/i18n/es-ES.json" }
     });
+
+    // DOBLE CLIC: abrir modal de modificación
+    $('#equipos tbody').on('dblclick', 'tr', function() {
+      const data = table.row(this).data();
+      // 1) Cargar pestaña Identificación
+      $('#codigoPlanta').val(data.codigo_planta);
+      $('#nombreEquipo').val(data.nombre);
+      $('#claseEquipo').val(data.clase_equipo);
+      $('#subclaseEquipo').val(data.subclase_equipo);
+      $('#estadoEquipo').val(data.estado);
+
+      // 2) Cargar pestaña Instalación
+      $('#ubicacionEquipo').val(data.ubicacion);
+      $('#fechaInstalacion').val(data.fecha_instalacion);
+      $('#proveedorInst').val(data.proveedor_instalacion);
+      $('#responsableInst').val(data.responsable_instalacion);
+      $('#obsInstalacion').val(data.observaciones);
+
+      // 3) Cargar Datos Técnicos dinámicos
+      $('#dynamicTecnicos').empty();
+      if (Array.isArray(data.datos_tecnicos)) {
+        data.datos_tecnicos.forEach((dt, i) => {
+          $('#dynamicTecnicos').append(`
+            <div class="col-6 tecnico-pair" data-slot="${i}">
+              <label class="form-label">${dt.etiqueta}</label>
+              <input type="text" class="form-control" value="${dt.valor}">
+            </div>
+          `);
+        });
+      }
+
+      // Mostrar modal
+      new bootstrap.Modal($('#modificarModal')).show();
+    });
+
+    // Añadir nuevo campo técnico en el modal
+    $('#addTecnico').click(function() {
+      const idx = $('.tecnico-pair').length;
+      $('#dynamicTecnicos').append(`
+        <div class="col-6 tecnico-pair" data-slot="${idx}">
+          <input type="text" class="form-control mb-1" placeholder="Etiqueta">
+          <input type="text" class="form-control" placeholder="Valor">
+        </div>
+      `);
+    });
+
+    // Guardar cambios (puedes sustituir esto con tu endpoint real)
+    $('#saveEquipo').click(function() {
+      const payload = {
+        codigo_planta: $('#codigoPlanta').val(),
+        // … recolecta todos los campos …
+      };
+      console.log('Enviar a back-end:', payload);
+      $('#modificarModal').modal('hide');
+    });
+  });
   </script>
 </body>
 </html>
