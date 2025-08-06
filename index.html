@@ -1,35 +1,108 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <title>Lista de equipos</title>
-  <link rel="stylesheet" href="assets/estilo.css" />
-  <!-- DataTables opcional (bonito y sin código extra) -->
-  <link rel="stylesheet"
-        href="https://cdn.datatables.net/2.0.7/css/dataTables.min.css">
+  <meta charset="utf-8">
+  <title>Inventario de Equipos</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- DataTables CSS -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- DataTables JS -->
+  <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin:2rem; }
+    h1 { color:#0d47a1; }
+    table.dataTable thead th { background:#e3f2fd; color:#0d47a1; font-weight:bold; }
+  </style>
 </head>
 <body>
-  <h1>Equipos – vista pública</h1>
-  <table id="tbl" class="display"></table>
+  <div class="container">
+    <h1 class="mb-4">Inventario de Equipos</h1>
+    <table id="equipos" class="display table table-striped" style="width:100%">
+      <thead>
+        <tr>
+          <th>Código planta</th>
+          <th>Nombre</th>
+          <th>Ubicación</th>
+          <th>Marca</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
 
-  <script src="https://cdn.datatables.net/2.0.7/js/dataTables.min.js"></script>
+  <!-- Modal de detalle -->
+  <div class="modal fade" id="equiposModal" tabindex="-1" aria-labelledby="equiposModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="equiposModalLabel">Detalle del Equipo</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <form id="detalleForm">
+            <div class="mb-3">
+              <label for="codigoPlanta" class="form-label">Código planta</label>
+              <input type="text" class="form-control" id="codigoPlanta" readonly>
+            </div>
+            <div class="mb-3">
+              <label for="nombreEquipo" class="form-label">Nombre</label>
+              <input type="text" class="form-control" id="nombreEquipo" readonly>
+            </div>
+            <div class="mb-3">
+              <label for="ubicacionEquipo" class="form-label">Ubicación</label>
+              <input type="text" class="form-control" id="ubicacionEquipo" readonly>
+            </div>
+            <div class="mb-3">
+              <label for="marcaEquipo" class="form-label">Marca</label>
+              <input type="text" class="form-control" id="marcaEquipo" readonly>
+            </div>
+            <div class="mb-3">
+              <label for="estadoEquipo" class="form-label">Estado</label>
+              <input type="text" class="form-control" id="estadoEquipo" readonly>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
-  fetch('equipos.json', {cache: 'no-store'})
-    .then(r => r.json())
-    .then(data => {
-      // transforma [{codigo:.., nombre:..}, …] -> filas y columnas
-      const cols = Object.keys(data[0] || {});
-      const header = cols.map(c => ({ title: c }));
-
-      new DataTable('#tbl', {
-        data: data.map(obj => cols.map(c => obj[c])),
-        columns: header,
-        paging: true,
-        searching: true,
-      });
-    })
-    .catch(err => {
-      document.body.innerHTML += `<p>Error cargando datos: ${err}</p>`;
+    $(document).ready(function() {
+      fetch('equipos.json')
+        .then(response => response.json())
+        .then(datos => {
+          const filas = datos.map(e => [
+            e.codigo_planta, e.nombre, e.ubicacion, e.marca, e.estado
+          ]);
+          const table = $('#equipos').DataTable({
+            data: filas,
+            pageLength: 25,
+            language: { url: "https://cdn.datatables.net/plug-ins/1.13.8/i18n/es-ES.json" }
+          });
+          $('#equipos tbody').on('dblclick', 'tr', function () {
+            var data = table.row(this).data();
+            $('#codigoPlanta').val(data[0]);
+            $('#nombreEquipo').val(data[1]);
+            $('#ubicacionEquipo').val(data[2]);
+            $('#marcaEquipo').val(data[3]);
+            $('#estadoEquipo').val(data[4]);
+            var modal = new bootstrap.Modal(document.getElementById('equiposModal'));
+            modal.show();
+          });
+        })
+        .catch(err => {
+          $('.container').html('<p class="text-danger">Error cargando equipos.json<br>' + err + '</p>');
+        });
     });
   </script>
 </body>
