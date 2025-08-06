@@ -1,23 +1,24 @@
-[
-  {
-    "Código":      "MOT-001",
-    "Nombre":      "Motor Ventilador 15 kW",
-    "Ubicación":   "Planta A / Línea 3",
-    "Marca":       "WEG",
-    "Estado":      "En servicio"
+{
+  "codigo_planta": "MOT-001",
+  "nombre": "Motor Ventilador 15 kW",
+  "clase_equipo": "Electromecánico",
+  "subclase_equipo": "Ventilador",
+  "modelo": "XJ-15",
+  "marca": "WEG",
+  "numero_serie": "SN12345",
+  "estado": "En servicio",
+  "imagenes": "...",
+  "instalacion": {
+    "ubicacion": "Planta A / Línea 3",
+    "fecha_adquisicion": "2022-01-15",
+    "fecha_instalacion": "2022-02-01",
+    "proveedor": "Proveedor SA",
+    "responsable_instalacion": "Juan Pérez",
+    "observaciones": "Sin incidencias"
   },
-  {
-    "Código":    "BOM-023",
-    "Nombre":    "Bomba centrifuga 50 m³/h",
-    "Ubicación": "Sala Bombas Norte",
-    "Marca":     "KSB",
-    "Estado":    "Fuera de servicio"
-  },
-  {
-    "Código":    "TRF-10",
-    "Nombre":    "Transformador 500 kVA",
-    "Ubicación": "Subestación 2",
-    "Marca":     "ABB",
-    "Estado":    "En mantenimiento"
-  }
-]
+  "datos_tecnicos": [
+    { "etiqueta": "Voltaje",   "valor": "400V" },
+    { "etiqueta": "Frecuencia","valor": "50Hz" },
+    { "etiqueta": "Proveedor", "valor": "WEG" }
+  ]
+}
